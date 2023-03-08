@@ -278,5 +278,40 @@ namespace Butterfly.Machine.CPU
             // Return the address
             return address;
         }
+
+        public static UInt16 GetAddress(this Generic cpu)
+        {
+            Instruction instruction = cpu.CurrentInstruction;
+            // Get the addressing mode
+            switch (instruction.AddressingMode)
+            {
+                case AddressingModes.Accumulator:
+                    return cpu.Accumulator();
+                case AddressingModes.Immediate:
+                    return cpu.Immediate();
+                case AddressingModes.ZeroPage:
+                    return cpu.ZeroPage();
+                case AddressingModes.ZeroPageX:
+                    return cpu.ZeroPageX();
+                case AddressingModes.ZeroPageY:
+                    return cpu.ZeroPageY();
+                case AddressingModes.Absolute:
+                    return cpu.Absolute();
+                case AddressingModes.AbsoluteX:
+                    return cpu.AbsoluteX();
+                case AddressingModes.AbsoluteY:
+                    return cpu.AbsoluteY();
+                case AddressingModes.Indirect:
+                    return cpu.Indirect();
+                case AddressingModes.IndirectX:
+                    return cpu.IndirectX();
+                case AddressingModes.IndirectY:
+                    return cpu.IndirectY();
+                case AddressingModes.Relative:
+                    return cpu.Relative();
+                default:
+                    throw new NotImplementedException("Addressing mode not implemented");
+            }
+        }
     }
 }

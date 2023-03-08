@@ -8,9 +8,6 @@ namespace Butterfly.Machine
         public Generic CPU;
         public MemoryController MemoryController;
 
-        public UInt16 resetVector = 0xFFFC;
-        public UInt16 interruptVector = 0xFFFE;
-
         public ButterflyMachine()
         {
             CPU = new Generic();

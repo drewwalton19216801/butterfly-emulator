@@ -48,7 +48,7 @@ Console.WriteLine();
 
 // Print the data in the reset vector (butterfly.resetVector)
 Console.WriteLine("Data in reset vector:");
-Console.WriteLine(butterfly.MemoryController.ReadMemory(butterfly.resetVector).ToString("X2") + " " + butterfly.MemoryController.ReadMemory((UInt16)(butterfly.resetVector + 1)).ToString("X2"));
+Console.WriteLine(butterfly.MemoryController.ReadMemory(butterfly.CPU.resetVector).ToString("X2") + " " + butterfly.MemoryController.ReadMemory((UInt16)(butterfly.CPU.resetVector + 1)).ToString("X2"));
 
 butterfly.Reset();
 Console.WriteLine();

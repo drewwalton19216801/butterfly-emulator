@@ -18,9 +18,15 @@ namespace Butterfly.Machine.CPU
         public UInt16 PC; // Program counter
         public byte P; // Status register
 
-        public MemoryController? MemoryController; // Memory controller
+        public UInt16 resetVector = 0xFFFC;
+        public UInt16 interruptVector = 0xFFFE;
 
-        public Int128 Cycles; // Cycle count
+        public MemoryController? MemoryController; // Memory controller
+        public Int128 Cycles = 0; // Cycle count
+        public Instruction? CurrentInstruction; // Current instruction
+        public double ClockSpeed; // Clock speed in MHz
+        public bool IllegalOpcode = false; // Illegal opcode flag
+        public bool Running = true; // Running flag
 
         // Status flag bitmask enum
         public enum StatusFlag
@@ -128,6 +134,28 @@ namespace Butterfly.Machine.CPU
             MemoryController!.WriteMemory(address, value);
             // Write the high byte
             MemoryController.WriteMemory((UInt16)(address + 1), value);
+        }
+
+        public void PushStack(byte value)
+        {
+            // Write the value to the stack
+            MemoryController!.WriteMemory((UInt16)(0x100 | SP), value);
+            // Decrement the stack pointer
+            SP--;
+        }
+
+        public byte PopStack()
+        {
+            // Increment the stack pointer
+            SP++;
+            // Read the value from the stack
+            return MemoryController!.ReadMemory((UInt16)(0x100 | SP));
+        }
+
+        public byte GetProcessorStatus()
+        {
+            // Get the processor status
+            return (byte)(P | (byte)StatusFlag.Unused);
         }
     }
 }
