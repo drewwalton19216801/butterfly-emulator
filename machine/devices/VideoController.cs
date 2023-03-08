@@ -36,6 +36,23 @@ namespace Butterfly.Machine.Devices
         public void WriteMemory(UInt16 address, byte value)
         {
             VideoControllerData[address - VideoControllerBaseAddress] = value;
+            // If we wrote to address 0x8100, print the character
+            if (address == 0x8100)
+            {
+                PrintCharacter();
+            }
+        }
+
+        /// <summary>
+        /// Print a character to the screen from the video controller
+        /// </summary>
+        public void PrintCharacter()
+        {
+            // Get the character to print
+            byte character = ReadMemory(0x8100);
+
+            // Print the character
+            Console.Write((char)character);
         }
     }
 }
