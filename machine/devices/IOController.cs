@@ -3,8 +3,8 @@ namespace Butterfly.Machine.Devices
     // TODO: Actually implement an IO controller
     public class IOController
     {
-        public const UInt16 IOControllerBaseAddress = 0x8000; // Start of IO controller address space
-        public const UInt16 IOControllerEndAddress =  0x80FF; // End of IO controller address space
+        public UInt16 IOControllerBaseAddress = 0x8000; // Start of IO controller address space
+        public UInt16 IOControllerEndAddress =  0x80FF; // End of IO controller address space
 
         public byte[] IOControllerData; // IO controller memory
 

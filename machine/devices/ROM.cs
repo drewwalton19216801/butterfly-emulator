@@ -3,8 +3,8 @@ namespace Butterfly.Machine.Devices
     public class ROM
     {
         // ROM is top 16 KB of address space
-        public const UInt16 ROMBaseAddress = 0xBFFF; // Start of read-only memory address space
-        public const UInt16 ROMEndAddress = 0xFFFF; // End of read-only memory address space
+        public UInt16 ROMBaseAddress = 0xBFFF; // Start of read-only memory address space
+        public UInt16 ROMEndAddress = 0xFFFF; // End of read-only memory address space
         public byte[] ROMData; // Read-only memory
 
         /// <summary>

@@ -2,8 +2,8 @@ namespace Butterfly.Machine.Devices
 {
     public class RAM
     {
-        public const UInt16 RAMBaseAddress = 0x0000; // Start of RAM address space
-        public const UInt16 RAMEndAddress = 0x7FFF; // End of RAM address space
+        public UInt16 RAMBaseAddress = 0x0000; // Start of RAM address space
+        public UInt16 RAMEndAddress = 0x7FFF; // End of RAM address space
         public byte[] RAMData; // RAM
 
         /// <summary>
