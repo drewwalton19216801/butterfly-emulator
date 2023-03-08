@@ -4,7 +4,7 @@ namespace Butterfly.Machine.Devices
     {
         // ROM is top 16 KB of address space
         public const UInt16 ROMBaseAddress = 0xBFFF; // Start of read-only memory address space
-        public const UInt16 ROMSize = 0x4000; // End of read-only memory address space
+        public const UInt16 ROMEndAddress = 0xFFFF; // End of read-only memory address space
         public byte[] ROMData; // Read-only memory
 
         /// <summary>
@@ -15,7 +15,7 @@ namespace Butterfly.Machine.Devices
         /// </remarks>
         public ROM()
         {
-            ROMData = new byte[ROMSize];
+            ROMData = new byte[ROMEndAddress - ROMBaseAddress + 1];
         }
 
         /// <summary>
@@ -28,6 +28,11 @@ namespace Butterfly.Machine.Devices
             return ROMData[address - ROMBaseAddress];
         }
 
+        public UInt16 RomSize()
+        {
+            return (UInt16)ROMData.Length;
+        }
+
         public void LoadROM(string filename)
         {
             try
@@ -36,7 +41,7 @@ namespace Butterfly.Machine.Devices
                 FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read);
 
                 // Read the file into the ROM, one byte at a time
-                for (int i = 0; i < ROMSize; i++)
+                for (int i = 0; i < ROMData.Length; i++)
                 {
                     ROMData[i] = (byte)file.ReadByte();
                 }

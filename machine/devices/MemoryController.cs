@@ -29,7 +29,7 @@ namespace Butterfly.Machine.Devices
             {
                 return VideoController.ReadMemory(address);
             }
-            else if (address >= ROM.ROMBaseAddress && address <= ROM.ROMBaseAddress + ROM.ROMSize)
+            else if (address >= ROM.ROMBaseAddress && address <= ROM.ROMBaseAddress + ROM.RomSize())
             {
                 return ROM.ReadMemory(address);
             }
@@ -53,7 +53,7 @@ namespace Butterfly.Machine.Devices
             {
                 VideoController.WriteMemory(address, value);
             }
-            else if (address >= ROM.ROMBaseAddress && address <= ROM.ROMBaseAddress + ROM.ROMSize)
+            else if (address >= ROM.ROMBaseAddress && address <= ROM.ROMBaseAddress + ROM.RomSize())
             {
                 throw new Exception("Cannot write to ROM");
             }
@@ -77,8 +77,8 @@ namespace Butterfly.Machine.Devices
                 + " (" + IOController.IOControllerData.Length.ToString() + " bytes)" + Environment.NewLine;
             memoryMap += "Video Controller: " + VideoController.VideoControllerBaseAddress.ToString("X4") + " - " + VideoController.VideoControllerEndAddress.ToString("X4")
                 + " (" + VideoController.VideoControllerData.Length.ToString() + " bytes)" + Environment.NewLine;
-            memoryMap += "ROM: " + ROM.ROMBaseAddress.ToString("X4") + " - " + (ROM.ROMBaseAddress + ROM.ROMSize).ToString("X4")
-                + " (" + ROM.ROMSize.ToString() + " bytes)" + Environment.NewLine;
+            memoryMap += "ROM: " + ROM.ROMBaseAddress.ToString("X4") + " - " + (ROM.ROMBaseAddress + ROM.RomSize()).ToString("X4")
+                + " (" + ROM.RomSize().ToString() + " bytes)" + Environment.NewLine;
             return memoryMap;
         }
     }

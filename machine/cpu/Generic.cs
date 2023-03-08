@@ -99,5 +99,33 @@ namespace Butterfly.Machine.CPU
         {
             return $"A: {A:X2} X: {X:X2} Y: {Y:X2} SP: {SP:X2} PC: {PC:X4} P: {P:X2}";
         }
+
+        public byte ReadMemory(UInt16 address)
+        {
+            return MemoryController!.ReadMemory(address);
+        }
+
+        public byte ReadMemory16(UInt16 address)
+        {
+            // Read the low byte
+            byte lowByte = MemoryController!.ReadMemory(address);
+            // Read the high byte
+            byte highByte = MemoryController.ReadMemory((UInt16)(address + 1));
+            // Return the 16-bit value
+            return (byte)(lowByte | (highByte << 8));
+        }
+
+        public void WriteMemory(UInt16 address, byte value)
+        {
+            MemoryController!.WriteMemory(address, value);
+        }
+
+        public void WriteMemory16(UInt16 address, byte value)
+        {
+            // Write the low byte
+            MemoryController!.WriteMemory(address, value);
+            // Write the high byte
+            MemoryController.WriteMemory((UInt16)(address + 1), value);
+        }
     }
 }
