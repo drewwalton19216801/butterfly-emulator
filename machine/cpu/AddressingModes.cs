@@ -183,7 +183,10 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Absolute addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
         public static UInt16 Absolute(this Generic cpu)
         {
-            throw new NotImplementedException("Absolute addressing mode not implemented");
+            // Fetch the next two bytes from memory
+            UInt16 address = cpu.ReadMemory16(cpu.PC++);
+            // Return the address
+            return address;
         }
 
         /// <summary>
@@ -249,7 +252,31 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Relative addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
         public static UInt16 Relative(this Generic cpu)
         {
-            throw new NotImplementedException("Relative addressing mode not implemented");
+            UInt16 offset;
+            UInt16 address;
+
+            // Get the offset
+            offset = cpu.ReadMemory(cpu.PC++);
+
+            // Check for negative offset
+            if ((offset & 0x80) == 0x80)
+            {
+                // Negative offset
+                offset = (UInt16)(0xFF00 | offset);
+            }
+
+            // Calculate the address
+            address = (UInt16)(cpu.PC + offset);
+
+            // Check for page-boundary crossing
+            if ((address & 0xFF00) != (cpu.PC & 0xFF00))
+            {
+                // Page-boundary crossing
+                cpu.Cycles++;
+            }
+
+            // Return the address
+            return address;
         }
     }
 }

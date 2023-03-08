@@ -20,6 +20,8 @@ namespace Butterfly.Machine.CPU
 
         public MemoryController? MemoryController; // Memory controller
 
+        public Int128 Cycles; // Cycle count
+
         // Status flag bitmask enum
         public enum StatusFlag
         {
