@@ -2,20 +2,25 @@
 
 main:
     lda #$42
-    sta $8100
+    jsr printchar
     lda #$41
-    sta $8100
+    jsr printchar
     lda #$44
-    sta $8100
+    jsr printchar
     lda #$46
-    sta $8100
+    jsr printchar
     lda #$4F
-    sta $8100
+    jsr printchar
     lda #$4F
-    sta $8100
+    jsr printchar
     lda #$44
-    sta $8100
+    jsr printchar
     brk
+
+printchar:
+    tax
+    stx $8100
+    rts
 
     .org $fffc
     .word main
