@@ -1,10 +1,12 @@
+using System.Text;
+
 namespace Butterfly.Machine.Devices
 {
     public class VideoController
     {
         // TODO: Actually implement a video controller
         public const UInt16 VideoControllerBaseAddress = 0x8100; // Start of video controller address space
-        public const UInt16 VideoControllerEndAddress = 0xBFFF; // End of video controller address space
+        public const UInt16 VideoControllerEndAddress = 0xBFFE; // End of video controller address space
         public byte[] VideoControllerData; // Video controller memory
 
         /// <summary>
@@ -49,10 +51,14 @@ namespace Butterfly.Machine.Devices
         public void PrintCharacter()
         {
             // Get the character to print
-            byte character = ReadMemory(0x8100);
+            byte[] chars = new byte[1];
+            chars[0] = ReadMemory(0x8100);
+
+            // Convert the character to a string
+            string characterString = Encoding.ASCII.GetChars(chars)[0].ToString();
 
             // Print the character
-            Console.Write((char)character);
+            Console.Write(characterString);
         }
     }
 }

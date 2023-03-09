@@ -56,3 +56,18 @@ Console.WriteLine();
 // Print the CPU registers
 Console.WriteLine("CPU registers:");
 Console.WriteLine(butterfly.CPU.GetRegisters());
+
+// Print the byte stored at address 0xBFFF
+Console.WriteLine("Byte stored at address 0xBFFF:");
+Console.WriteLine(butterfly.MemoryController.ReadMemory(butterfly.MemoryController.ROM.ROMBaseAddress).ToString("X2"));
+
+Console.WriteLine();
+butterfly.Run();
+
+// Print the CPU registers
+Console.WriteLine("CPU registers:");
+Console.WriteLine(butterfly.CPU.GetRegisters());
+
+// Print the byte stored at address 0xC000
+Console.WriteLine("Byte stored at address 0xC000:");
+Console.WriteLine(butterfly.MemoryController.ReadMemory(0xC000).ToString("X2"));

@@ -139,7 +139,11 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Immediate addressing mode is used for instructions that require an immediate value</remarks>
         public static UInt16 Immediate(this Generic cpu)
         {
-            return cpu.ReadMemory(cpu.PC++);
+            UInt16 address = cpu.PC;
+            // Increment the program counter
+            cpu.PC++;
+            // Return the address
+            return address;
         }
 
         /// <summary>
@@ -184,7 +188,7 @@ namespace Butterfly.Machine.CPU
         public static UInt16 Absolute(this Generic cpu)
         {
             // Fetch the next two bytes from memory
-            UInt16 address = cpu.ReadMemory16(cpu.PC++);
+            UInt16 address = cpu.FetchWord();
             // Return the address
             return address;
         }
@@ -249,14 +253,17 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The address to jump to</returns>
-        /// <remarks>Relative addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
+        /// <remarks>Relative addresses are used when branching</remarks>
         public static UInt16 Relative(this Generic cpu)
         {
             UInt16 offset;
             UInt16 address;
 
             // Get the offset
-            offset = cpu.ReadMemory(cpu.PC++);
+            offset = cpu.FetchByte();
+
+            // Increment the program counter
+            cpu.PC++;
 
             // Check for negative offset
             if ((offset & 0x80) == 0x80)

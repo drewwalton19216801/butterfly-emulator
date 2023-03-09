@@ -275,11 +275,11 @@ namespace Butterfly.Machine.CPU
         };
 
         /// <summary>
-        /// Lookup an instruction by its opcode
+        /// Get an instruction by its opcode
         /// </summary>
         /// <param name="opcode"></param>
         /// <returns></returns>
-        public static Instruction Lookup(byte opcode)
+        public static Instruction GetInstruction(byte opcode)
         {
             // Loop through the instruction set and return the instruction that matches the opcode
             foreach (Instruction instruction in Instructions)

@@ -24,9 +24,11 @@ namespace Butterfly.Machine.CPU
         public MemoryController? MemoryController; // Memory controller
         public Int128 Cycles = 0; // Cycle count
         public Instruction? CurrentInstruction; // Current instruction
-        public double ClockSpeed; // Clock speed in MHz
+        public double ClockSpeed = 0.00001; // Clock speed in MHz
         public bool IllegalOpcode = false; // Illegal opcode flag
         public bool Running = true; // Running flag
+
+        private InstructionExecutor instructionExecutor;
 
         // Status flag bitmask enum
         public enum StatusFlag
@@ -136,7 +138,43 @@ namespace Butterfly.Machine.CPU
             MemoryController.WriteMemory((UInt16)(address + 1), value);
         }
 
-        public void PushStack(byte value)
+        public byte FetchByte()
+        {
+            // Read the byte
+            byte value = MemoryController!.ReadMemory(PC);
+            // Increment the program counter
+            PC++;
+            // Return the byte
+            return value;
+        }
+
+        public sbyte FetchSignedByte()
+        {
+            // Read the byte
+            sbyte value = (sbyte)MemoryController!.ReadMemory(PC);
+            // Increment the program counter
+            PC++;
+            // Return the byte
+            return value;
+        }
+
+        public UInt16 FetchWord()
+        {
+            // Read the low byte
+            byte lowByte = FetchByte();
+            // Read the high byte
+            byte highByte = FetchByte();
+            // Return the word
+            return (UInt16)(lowByte | (highByte << 8));
+        }
+
+        public UInt16 StackPointerToAddress()
+        {
+            // Return the stack pointer address
+            return (UInt16)(0x100 + SP);
+        }
+
+        public void PushByte(byte value)
         {
             // Write the value to the stack
             MemoryController!.WriteMemory((UInt16)(0x100 | SP), value);
@@ -144,18 +182,84 @@ namespace Butterfly.Machine.CPU
             SP--;
         }
 
-        public byte PopStack()
+        public void PushWord(UInt16 value)
+        {
+            // Push the high byte
+            PushByte((byte)(value >> 8));
+            // Push the low byte
+            PushByte((byte)value);
+        }
+
+        public byte PopByte()
         {
             // Increment the stack pointer
             SP++;
             // Read the value from the stack
-            return MemoryController!.ReadMemory((UInt16)(0x100 | SP));
+            return MemoryController!.ReadMemory(StackPointerToAddress());
+        }
+
+        public UInt16 PopWord()
+        {
+            // Pop the low byte
+            byte lowByte = PopByte();
+            // Pop the high byte
+            byte highByte = PopByte();
+            // Return the word
+            return (UInt16)(lowByte | (highByte << 8));
+        }
+
+        public void PushPC()
+        {
+            PushWord(PC);
+        }
+
+        public byte PeekByte()
+        {
+            // Read the byte
+            return MemoryController!.ReadMemory(PC);
+        }
+
+        public UInt16 PeekWord()
+        {
+            // Read the low byte
+            byte lowByte = MemoryController!.ReadMemory(PC);
+            // Read the high byte
+            byte highByte = MemoryController.ReadMemory((UInt16)(PC + 1));
+            // Return the word
+            return (UInt16)(lowByte | (highByte << 8));
         }
 
         public byte GetProcessorStatus()
         {
             // Get the processor status
             return (byte)(P | (byte)StatusFlag.Unused);
+        }
+
+        public void SetProcessorStatus(byte value)
+        {
+            // Set the processor status
+            P = (byte)(value & ~(byte)StatusFlag.Unused);
+        }
+
+        public void ExecuteNextInstruction()
+        {
+            // Create the instruction executor
+            instructionExecutor = new InstructionExecutor(this);
+
+            // Fetch the opcode
+            byte opcode = MemoryController!.ReadMemory(PC);
+
+            // Get the instruction
+            CurrentInstruction = InstructionSet.GetInstruction(opcode);
+
+            // Increment the program counter
+            PC++;
+
+            // Execute the instruction
+            instructionExecutor.ExecuteInstruction(CurrentInstruction);
+
+            // Update the cycle count
+            Cycles += CurrentInstruction.Cycles;
         }
     }
 }

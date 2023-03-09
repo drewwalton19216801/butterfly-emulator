@@ -5,20 +5,27 @@ namespace Butterfly.Machine.CPU
     public class InstructionExecutor
     {
         public Generic CPU;
-        public MemoryController MemoryController;
 
-        public InstructionExecutor(Generic cpu, MemoryController memoryController)
+        public InstructionExecutor(Generic cpu)
         {
             CPU = cpu;
-            MemoryController = memoryController;
         }
 
-        public void ExecuteInstruction(Instruction instruction)
+        public void ExecuteInstruction(Instruction instruction, bool disassemble = false)
         {
             string mnemonic = instruction.Mnemonic;
 
+            if (disassemble)
+            {
+                Disassembler disassembler = new Disassembler();
+                Console.WriteLine(disassembler.DisassembleInstruction(CPU, instruction));
+            }
+
             switch (mnemonic)
             {
+                case "BRK":
+                    BRK();
+                    break;
                 case "LDA":
                     LDA();
                     break;
@@ -34,10 +41,9 @@ namespace Butterfly.Machine.CPU
         public void BRK()
         {
             // Push the program counter onto the stack
-            CPU.PushStack((byte)(CPU.PC >> 8));
-            CPU.PushStack((byte)(CPU.PC & 0xFF));
+            CPU.PushPC();
             // Push the processor status onto the stack
-            CPU.PushStack(CPU.GetProcessorStatus());
+            CPU.PushByte(CPU.GetProcessorStatus());
             // Set the interrupt disable flag
             CPU.InterruptDisableFlag = true;
             // Set the program counter to the interrupt vector
@@ -48,20 +54,16 @@ namespace Butterfly.Machine.CPU
         public void LDA()
         {
             UInt16 address = CPU.GetAddress();
-            byte value = MemoryController.ReadMemory(address);
+            byte value = CPU.ReadMemory(address);
             CPU.A = value;
             CPU.ZeroFlag = value == 0;
             CPU.NegativeFlag = (value & 0x80) != 0;
-            // Advance the program counter
-            CPU.PC += CPU.CurrentInstruction.Bytes;
         }
 
         public void STA()
         {
             UInt16 address = CPU.GetAddress();
-            MemoryController.WriteMemory(address, CPU.A);
-            // Advance the program counter
-            CPU.PC += CPU.CurrentInstruction.Bytes;
+            CPU.WriteMemory(address, CPU.A);
         }
     }
 }
