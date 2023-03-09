@@ -288,9 +288,9 @@ namespace Butterfly.Machine.CPU
 
         public static UInt16 GetAddress(this Generic cpu)
         {
-            Instruction instruction = cpu.CurrentInstruction;
+            Instruction instruction = cpu.CurrentInstruction!;
             // Get the addressing mode
-            switch (instruction.AddressingMode)
+            switch (instruction!.AddressingMode)
             {
                 case AddressingModes.Accumulator:
                     return cpu.Accumulator();

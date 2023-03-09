@@ -6,13 +6,9 @@ ButterflyMachine butterfly = new ButterflyMachine();
 Console.WriteLine("Memory map:");
 Console.WriteLine(butterfly.MemoryController.GetMemoryMap());
 
-// Print the CPU registers
-Console.WriteLine("CPU registers:");
-Console.WriteLine(butterfly.CPU.GetRegisters());
-
 // Ask the user for a path to a .bin file
 Console.Write("Enter path to .bin file: ");
-string path = Console.ReadLine();
+string path = Console.ReadLine()!;
 
 // Check for null or empty string
 if (string.IsNullOrEmpty(path))
@@ -37,37 +33,8 @@ Console.WriteLine("Path: " + path);
 
 butterfly.MemoryController.LoadROM(path);
 
-// Print the first 16 bytes of ROM
-Console.WriteLine("First 17 bytes of ROM:");
-for (int i = 0; i < 17; i++)
-{
-    Console.Write(butterfly.MemoryController.ReadMemory((UInt16)(butterfly.MemoryController.ROM.ROMBaseAddress + i)).ToString("X2") + " ");
-}
-
-Console.WriteLine();
-
-// Print the data in the reset vector (butterfly.resetVector)
-Console.WriteLine("Data in reset vector:");
-Console.WriteLine(butterfly.MemoryController.ReadMemory(butterfly.CPU.resetVector).ToString("X2") + " " + butterfly.MemoryController.ReadMemory((UInt16)(butterfly.CPU.resetVector + 1)).ToString("X2"));
-
 butterfly.Reset();
-Console.WriteLine();
-
-// Print the CPU registers
-Console.WriteLine("CPU registers:");
-Console.WriteLine(butterfly.CPU.GetRegisters());
-
-// Print the byte stored at address 0xBFFF
-Console.WriteLine("Byte stored at address 0xBFFF:");
-Console.WriteLine(butterfly.MemoryController.ReadMemory(butterfly.MemoryController.ROM.ROMBaseAddress).ToString("X2"));
 
 Console.WriteLine();
+
 butterfly.Run();
-
-// Print the CPU registers
-Console.WriteLine("CPU registers:");
-Console.WriteLine(butterfly.CPU.GetRegisters());
-
-// Print the byte stored at address 0xC000
-Console.WriteLine("Byte stored at address 0xC000:");
-Console.WriteLine(butterfly.MemoryController.ReadMemory(0xC000).ToString("X2"));

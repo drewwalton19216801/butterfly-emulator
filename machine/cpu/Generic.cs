@@ -28,7 +28,7 @@ namespace Butterfly.Machine.CPU
         public bool IllegalOpcode = false; // Illegal opcode flag
         public bool Running = true; // Running flag
 
-        private InstructionExecutor instructionExecutor;
+        private InstructionExecutor? instructionExecutor;
 
         // Status flag bitmask enum
         public enum StatusFlag

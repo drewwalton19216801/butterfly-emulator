@@ -13,7 +13,7 @@ namespace Butterfly.Machine.CPU
 
         public void ExecuteInstruction(Instruction instruction, bool disassemble = false)
         {
-            string mnemonic = instruction.Mnemonic;
+            string mnemonic = instruction.Mnemonic!;
 
             if (disassemble)
             {
