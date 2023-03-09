@@ -1,6 +1,13 @@
     .org $bfff
 
 main:
+    jsr deadbeef
+    jsr space
+    jsr badfood
+    jsr space
+    jmp main
+
+badfood:
     lda #$42
     jsr printchar
     lda #$41
@@ -15,7 +22,31 @@ main:
     jsr printchar
     lda #$44
     jsr printchar
-    brk
+    rts
+
+deadbeef:
+    lda #$44
+    jsr printchar
+    lda #$45
+    jsr printchar
+    lda #$41
+    jsr printchar
+    lda #$44
+    jsr printchar
+    lda #$42
+    jsr printchar
+    lda #$45
+    jsr printchar
+    lda #$45
+    jsr printchar
+    lda #$46
+    jsr printchar
+    rts
+
+space:
+    lda #$20
+    jsr printchar
+    rts
 
 printchar:
     tax

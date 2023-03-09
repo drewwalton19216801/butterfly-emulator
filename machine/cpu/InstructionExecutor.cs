@@ -26,6 +26,9 @@ namespace Butterfly.Machine.CPU
                 case "BRK":
                     BRK();
                     break;
+                case "JMP":
+                    JMP();
+                    break;
                 case "JSR":
                     JSR();
                     break;
@@ -63,6 +66,11 @@ namespace Butterfly.Machine.CPU
             // Set the program counter to the interrupt vector
             CPU.PC = CPU.interruptVector;
             CPU.Running = false;
+        }
+
+        public void JMP()
+        {
+            CPU.PC = CPU.GetAddress();
         }
 
         public void JSR()

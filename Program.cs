@@ -33,6 +33,23 @@ Console.WriteLine("Path: " + path);
 
 butterfly.MemoryController.LoadROM(path);
 
+// Ask the user to specify the CPU speed (in MHz)
+Console.Write("Enter CPU speed (in MHz): ");
+string speed = Console.ReadLine()!;
+
+// Check for null or empty string
+if (string.IsNullOrEmpty(speed))
+{
+    Console.WriteLine("Invalid speed.");
+    return;
+}
+
+// Convert the speed to a double
+double speedDouble = double.Parse(speed);
+
+// Set the CPU speed
+butterfly.CPU.ClockSpeed = speedDouble;
+
 butterfly.Reset();
 
 Console.WriteLine();
