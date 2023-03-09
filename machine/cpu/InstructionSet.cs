@@ -292,7 +292,7 @@ namespace Butterfly.Machine.CPU
             }
 
             // If we get here, the instruction was not found
-            return new Instruction { Mnemonic = "XXX", OpCode = 0xFF, Bytes = 1, Cycles = 0, AddressingMode = AddressingModes.Implied };
+            return new Instruction { Mnemonic = "XXX", OpCode = opcode, Bytes = 1, Cycles = 0, AddressingMode = AddressingModes.Implied };
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Butterfly.Machine.CPU
         {
             Carry = 0x01,
             Zero = 0x02,
-            InterruptDisable = 0x04,
+            InterruptEnable = 0x04,
             DecimalMode = 0x08,
             BreakCommand = 0x10,
             Unused = 0x20,
@@ -56,10 +56,10 @@ namespace Butterfly.Machine.CPU
             set { P = (byte)(value ? P | (byte)StatusFlag.Zero : P & ~(byte)StatusFlag.Zero); }
         }
 
-        public bool InterruptDisableFlag
+        public bool InterruptEnableFlag
         {
-            get { return (P & (byte)StatusFlag.InterruptDisable) != 0; }
-            set { P = (byte)(value ? P | (byte)StatusFlag.InterruptDisable : P & ~(byte)StatusFlag.InterruptDisable); }
+            get { return (P & (byte)StatusFlag.InterruptEnable) != 0; }
+            set { P = (byte)(value ? P | (byte)StatusFlag.InterruptEnable : P & ~(byte)StatusFlag.InterruptEnable); }
         }
 
         public bool DecimalModeFlag
@@ -98,11 +98,11 @@ namespace Butterfly.Machine.CPU
             A = 0;
             X = 0;
             Y = 0;
-            SP = 0xFD;
+            SP = 0xFF;
             // Read PC from reset vector
             PC = (UInt16)(MemoryController!.ReadMemory(0xFFFC) | (MemoryController.ReadMemory(0xFFFD) << 8));
             // Set status register
-            P = (byte)(StatusFlag.Unused | StatusFlag.InterruptDisable);
+            P = (byte)(StatusFlag.Unused | StatusFlag.InterruptEnable);
         }
 
         public string GetRegisters()
@@ -208,9 +208,22 @@ namespace Butterfly.Machine.CPU
             return (UInt16)(lowByte | (highByte << 8));
         }
 
-        public void PushPC()
+        public void StackPush(byte value)
         {
-            PushWord(PC);
+            WriteMemory((UInt16)(0x100 | SP), value);
+            if (SP == 0x00)
+                SP = 0xFF;
+            else
+                SP--;
+        }
+
+        public byte StackPop()
+        {
+            if (SP == 0xFF)
+                SP = 0x00;
+            else
+                SP++;
+            return ReadMemory((UInt16)(0x100 | SP));
         }
 
         public byte PeekByte()
@@ -256,7 +269,7 @@ namespace Butterfly.Machine.CPU
             PC++;
 
             // Execute the instruction
-            instructionExecutor.ExecuteInstruction(CurrentInstruction);
+            instructionExecutor.ExecuteInstruction(CurrentInstruction, false);
 
             // Update the cycle count
             Cycles += CurrentInstruction.Cycles;

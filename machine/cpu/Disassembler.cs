@@ -67,7 +67,7 @@ namespace Butterfly.Machine.CPU
                     break;
             }
 
-            return $"{instruction.Mnemonic} {operandString}";
+            return $"{instruction.Mnemonic} {operandString} OPCODE: {instruction.OpCode:X2}";
         }
     }
 }
