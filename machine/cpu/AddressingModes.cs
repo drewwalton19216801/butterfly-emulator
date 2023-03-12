@@ -154,7 +154,7 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Zero page addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
         public static UInt16 ZeroPage(this Generic cpu)
         {
-            throw new NotImplementedException("ZeroPage addressing mode not implemented");
+            return cpu.FetchByte();
         }
 
         /// <summary>
@@ -165,7 +165,8 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Zero page X addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the X register</remarks>
         public static UInt16 ZeroPageX(this Generic cpu)
         {
-            throw new NotImplementedException("ZeroPageX addressing mode not implemented");
+            UInt16 address = (ushort)((cpu.FetchByte() + cpu.X) % 256);
+            return address;
         }
 
         /// <summary>
@@ -176,7 +177,8 @@ namespace Butterfly.Machine.CPU
         /// <remarks>Zero page Y addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the Y register</remarks>
         public static UInt16 ZeroPageY(this Generic cpu)
         {
-            throw new NotImplementedException("ZeroPageY addressing mode not implemented");
+            UInt16 address = (ushort)((cpu.FetchByte() + cpu.Y) % 256);
+            return address;
         }
 
         /// <summary>
@@ -184,12 +186,20 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next two bytes in memory</returns>
-        /// <remarks>Absolute addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
+        /// <remarks>Absolute addressing mode is used for instructions that require an absolute address</remarks>
         public static UInt16 Absolute(this Generic cpu)
         {
-            // Fetch the next two bytes from memory
-            UInt16 address = cpu.FetchWord();
-            // Return the address
+            UInt16 addressLow;
+            UInt16 addressHigh;
+            UInt16 address;
+
+            // Get the low byte of the address
+            addressLow = cpu.FetchByte();
+            // Get the high byte of the address
+            addressHigh = cpu.FetchByte();
+            // Combine the two bytes to form the address
+            address = (ushort)((addressHigh << 8) | addressLow);
+
             return address;
         }
 
@@ -198,10 +208,11 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next two bytes in memory plus the X register</returns>
-        /// <remarks>Absolute X addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the X register</remarks>
+        /// <remarks>Absolute X addressing mode is used for instructions that require an absolute address plus the X register</remarks>
         public static UInt16 AbsoluteX(this Generic cpu)
         {
-            throw new NotImplementedException("AbsoluteX addressing mode not implemented");
+            UInt16 address = (ushort)(cpu.FetchWord() + cpu.X);
+            return address;
         }
 
         /// <summary>
@@ -209,10 +220,11 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next two bytes in memory plus the Y register</returns>
-        /// <remarks>Absolute Y addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the Y register</remarks>
+        /// <remarks>Absolute Y addressing mode is used for instructions that require an absolute address plus the Y register</remarks>
         public static UInt16 AbsoluteY(this Generic cpu)
         {
-            throw new NotImplementedException("AbsoluteY addressing mode not implemented");
+            UInt16 address = (ushort)(cpu.FetchWord() + cpu.Y);
+            return address;
         }
 
         /// <summary>
@@ -220,10 +232,34 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next two bytes in memory</returns>
-        /// <remarks>Indirect addressing mode is used for instructions that require an address in the first 256 bytes of memory</remarks>
+        /// <remarks>operand is address; effective address is contents of word at address: C.w($HHLL)</remarks>
         public static UInt16 Indirect(this Generic cpu)
         {
-            throw new NotImplementedException("Indirect addressing mode not implemented");
+            UInt16 addressLow;
+            UInt16 addressHigh;
+            UInt16 effectiveLow;
+            UInt16 effectiveHigh;
+            UInt16 absoluteAddress;
+            UInt16 address;
+
+            // Get the low byte of the address
+            addressLow = cpu.FetchByte();
+            // Get the high byte of the address
+            addressHigh = cpu.FetchByte();
+
+            // Calculate the absolute address
+            absoluteAddress = (ushort)((addressHigh << 8) | addressLow);
+
+            // Get the low byte of the effective address
+            effectiveLow = cpu.ReadMemory(absoluteAddress);
+            // Get the high byte of the effective address (implements the Indirect JMP fix for the CMOS 6502)
+            effectiveHigh = cpu.ReadMemory((ushort)((absoluteAddress & 0xFF00) | ((absoluteAddress + 1) & 0x00FF)));
+
+            // Calculate the address
+            address = ((ushort)(effectiveLow + 0x100 * effectiveHigh));
+
+            // Return the address
+            return address;
         }
 
         /// <summary>
@@ -231,10 +267,21 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next byte in memory plus the X register</returns>
-        /// <remarks>Indirect X addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the X register</remarks>
+        /// <remarks>operand is zeropage address; effective address is word in (LL + X, LL + X + 1), inc. without carry: C.w($00LL + X)</remarks>
         public static UInt16 IndirectX(this Generic cpu)
         {
-            throw new NotImplementedException("IndirectX addressing mode not implemented");
+            UInt16 zeroPageLow;
+            UInt16 zeroPageHigh;
+            UInt16 address;
+
+            // Get the low byte of the zero page address
+            zeroPageLow = (ushort)((cpu.FetchByte() + cpu.X) % 256);
+            // Get the high byte of the zero page address
+            zeroPageHigh = (ushort)((zeroPageLow + 1) % 256);
+            // Get the address
+            address = (ushort)(cpu.ReadMemory(zeroPageLow) + (cpu.ReadMemory(zeroPageHigh) << 8));
+            // Return the address
+            return address;
         }
 
         /// <summary>
@@ -242,10 +289,21 @@ namespace Butterfly.Machine.CPU
         /// </summary>
         /// <param name="cpu">The CPU</param>
         /// <returns>The value of the next byte in memory plus the Y register</returns>
-        /// <remarks>Indirect Y addressing mode is used for instructions that require an address in the first 256 bytes of memory plus the Y register</remarks>
+        /// <remarks>operand is zeropage address; effective address is word in (LL, LL + 1) incremented by Y with carry: C.w($00LL) + Y</remarks>
         public static UInt16 IndirectY(this Generic cpu)
         {
-            throw new NotImplementedException("IndirectY addressing mode not implemented");
+            UInt16 zeroPageLow;
+            UInt16 zeroPageHigh;
+            UInt16 address;
+
+            // Get the low byte of the zero page address
+            zeroPageLow = cpu.FetchByte();
+            // Get the high byte of the zero page address
+            zeroPageHigh = (ushort)((zeroPageLow + 1) % 256);
+            // Get the address
+            address = (ushort)(cpu.ReadMemory(zeroPageLow) + (cpu.ReadMemory(zeroPageHigh) << 8) + cpu.Y);
+            // Return the address
+            return address;
         }
 
         /// <summary>

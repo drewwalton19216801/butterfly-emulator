@@ -1,11 +1,26 @@
     .org $bfff
 
 main:
-    jsr deadbeef
-    jsr space
-    jsr badfood
-    jsr space
-    jmp main
+    lda #$00
+    sta $6001
+    lda #$09
+    sta $6000
+    jmp loop
+
+loop:
+    dec $6000
+    lda $6000
+    cmp $6001
+    beq die
+    jsr prog
+    jmp loop
+
+die:
+    brk
+    
+prog:
+    jsr deadfood
+    rts
 
 badfood:
     lda #$42
@@ -43,8 +58,17 @@ deadbeef:
     jsr printchar
     rts
 
-space:
-    lda #$20
+deadfood:
+    jsr deadbeef
+    jsr newline
+    jsr badfood
+    jsr newline
+    rts
+
+newline:
+    lda #$0D
+    jsr printchar
+    lda #$0A
     jsr printchar
     rts
 
