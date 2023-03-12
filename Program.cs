@@ -26,6 +26,12 @@ if (path.StartsWith("'") && path.EndsWith("'"))
     path = path.Substring(1, path.Length - 2);
 }
 
+// Strip the double quote from the beginning and end of the path
+if (path.StartsWith("\"") && path.EndsWith("\""))
+{
+    path = path.Substring(1, path.Length - 2);
+}
+
 Console.WriteLine();
 
 // Print the path and exit
