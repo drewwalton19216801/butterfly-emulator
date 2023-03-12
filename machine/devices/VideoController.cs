@@ -51,11 +51,11 @@ namespace Butterfly.Machine.Devices
         public void PrintCharacter()
         {
             // Get the character to print
-            byte[] chars = new byte[1];
-            chars[0] = ReadMemory(0x8100);
+            byte character;
+            character = ReadMemory(0x8100);
 
             // Convert the character to a string
-            string characterString = Encoding.ASCII.GetChars(chars)[0].ToString();
+            string characterString = Encoding.ASCII.GetString(new byte[] { character });
 
             // Print the character
             Console.Write(characterString);
