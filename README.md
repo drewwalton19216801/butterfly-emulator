@@ -2,8 +2,8 @@
 # Butterfly
 An experiment in hardware and software design with the goal of creating an extensible emulator for emulating 6502-based computer systems. It may never be complete or accurate.
 ## Features
-- [ ] Decimal mode
-- [ ] Controllable clock speed
+- [X] Decimal mode (untested)
+- [X] Controllable clock speed
 - [ ] Cycle accuracy
 - [ ] Interrupts
 - [ ] Non-maskable interrupts
@@ -11,8 +11,8 @@ An experiment in hardware and software design with the goal of creating an exten
 - [ ] 100% legal addressing mode coverage
 - [ ] 100% illegal instruction coverage
 - [ ] 6502 variant support
-- [ ] Loading ROMs from files
-- [ ] Implement a demo machine with RAM, ROM, and some simple I/O
+- [X] Loading ROMs from files
+- [X] Implement a demo machine with RAM, ROM, and some simple I/O
 ## Building
 *Coming soon.*
 ## Running
